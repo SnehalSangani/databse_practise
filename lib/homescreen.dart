@@ -10,42 +10,49 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  Todocontroller todocontroller=Get.put(Todocontroller());
+  Todocontroller todocontroller = Get.put(Todocontroller());
+
   @override
   void initState() {
     super.initState();
     todocontroller.readtodo();
   }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(
+    return SafeArea(
+        child: Scaffold(
       body: Obx(
-        () =>  ListView.builder(itemBuilder: (context, index) {
-          return ListTile(
-            title: Text("${todocontroller.todolist[index]['title']}"),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete,color: Colors.red,),
-              onPressed: () {
-                int id = todocontroller.todolist[index]['id'];
-                todocontroller.delettodo(id);
-                todocontroller.readtodo();
-
-
-              },
-            ),
-          );
-
-        },itemCount: todocontroller.todolist.length,),
+        () => (todocontroller.todolist.isEmpty)
+            ? Center(
+          child: Text("No data"),
+        )
+            : ListView.builder(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text("${todocontroller.todolist[index]['title']}"),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        int id = todocontroller.todolist[index]['id'];
+                        todocontroller.delettodo(id);
+                        todocontroller.readtodo();
+                      },
+                    ),
+                  );
+                },
+                itemCount: todocontroller.todolist.length,
+              ),
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.toNamed('/add')!.then((value) => todocontroller.readtodo());
         },
         child: const Icon(Icons.add),
       ),
-
     ));
-
   }
 }

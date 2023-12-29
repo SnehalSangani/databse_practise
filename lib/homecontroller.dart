@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 class Todocontroller extends GetxController
 {
-  RxList<Map>todolist=<Map>[].obs;
+  RxList todolist=<Map>[].obs;
 
   Future<void> readtodo()
   async {

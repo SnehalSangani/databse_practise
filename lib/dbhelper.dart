@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -11,42 +12,55 @@ class Dbhelper
 
   Database? database;
 
-  Future<Object?> checkdb()
-  async {
-    if(database!=null)
-      {
-        return database;
-      }
-    else
-      {
-        return await initdb();
-      }
+  // Future<Object?> checkdb()
+  // async {
+  //   if(database!=null)
+  //     {
+  //       return database;
+  //     }
+  //   else
+  //     {
+  //       return await initdb();
+  //     }
+  // }
+
+  initdb() async {
+    // Directory directory = await getApplicationDocumentsDirectory();
+    String databasePath = await getDatabasesPath();
+    String path = join(databasePath, 'snehal.db');
+    database = await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        String query =
+            "CREATE TABLE todo(id INTEGER PRIMARY KEY AUTOINCREMENT ,title TEXT,desc TEXT)";
+        await db.execute(query).then(
+              (value) {
+            log("Table Create Successfully");
+          },
+        );
+      },
+    );
   }
 
-  Future<Future<Database>> initdb()
-  async {
-    Directory directory=await getApplicationDocumentsDirectory();
-    String path=join(directory.path,'snehal.db');
-    return openDatabase(path,version: 1,onCreate: (db, version) {
-      String query="CREATE TABLE todo(id INTEGER PRIMARY KEY AUTOINCREMENT ,title TEXT,desc TEXT)";
-      db.execute(query);
-    },);
-  }
 
-  Future<void> inserdeta({required title,required desc})
-  async {
+  Future<void> inserdeta({required String title, required String desc}) async {
+    initdb();
     database!.insert("todo", {
-      "title":title,
-      "desc":desc,
-
-    });
-
+      "title": title,
+      "desc": desc,
+    }).then(
+          (value) {
+        log("Data Insert Successfully");
+      },
+    );
   }
 
-  Future<List<Map>> readdata()
+  Future<List> readdata()
   async {
+    initdb();
     String query="SELECT * FROM todo";
-    List<Map> list=await database!.rawQuery(query);
+    List list=await database!.rawQuery(query);
     return list;
 
 
@@ -54,7 +68,7 @@ class Dbhelper
 
   void deletedata({required id})
   {
-    
+    initdb();
     database!.delete('todo',where: "id=?",whereArgs: [id]);
 
   }

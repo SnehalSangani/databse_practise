@@ -19,7 +19,7 @@ class _AddscreenState extends State<Addscreen> {
   @override
   void initState() {
     super.initState();
-    Dbhelper.helper.checkdb();
+    //Dbhelper.helper.checkdb();
   }
   @override
   Widget build(BuildContext context) {
